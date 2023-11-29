@@ -3,13 +3,13 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "cockroachdb"
   url = env("DATABASE_URL")
   
 }
 
 model Store {
-  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  id              BigInt    @id @default(autoincrement()) @map("_id") 
   name            String
   userId          String
   billboards      Billboard[] @relation("StoreToBillboard")
@@ -23,8 +23,8 @@ model Store {
 }
 
 model Billboard {
-  id          String        @id @default(auto()) @map("_id") @db.ObjectId
-  storeId     String        @db.ObjectId
+  id          BigInt        @id  @map("_id") 
+  storeId     BigInt       
   store       Store         @relation("StoreToBillboard", fields: [storeId], references: [id])
   label       String
   imageUrl    String
@@ -36,10 +36,10 @@ model Billboard {
 }
 
 model Category {
-  id          String      @id @default(auto()) @map("_id") @db.ObjectId
-  storeId     String      @db.ObjectId// Foreign Key to Store
+  id          BigInt      @id @default(autoincrement()) @map("_id") @db.Int8
+  storeId     BigInt      @db.Int8// Foreign Key to Store
   store       Store       @relation("StoreToCategory", fields: [storeId], references: [id])
-  billboardId String      @db.ObjectId// Foreign Key to Billboard
+  billboardId BigInt      @db.Int8// Foreign Key to Billboard
   billboard   Billboard   @relation(fields: [billboardId], references: [id])
   name        String
   products    Product[]   @relation("CategoryToProduct")
@@ -51,18 +51,18 @@ model Category {
 }
 
 model Product {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  storeId     String    @db.ObjectId// Foreign Key to Store
+  id          BigInt    @id @default(autoincrement()) @map("_id") @db.Int8
+  storeId     BigInt    @db.Int8// Foreign Key to Store
   store       Store     @relation("StoreToProduct", fields: [storeId], references: [id])
-  categoryId  String    @db.ObjectId// Foreign Key to Category
+  categoryId  BigInt    @db.Int8// Foreign Key to Category
   category    Category  @relation("CategoryToProduct", fields: [categoryId], references: [id])
   name        String
   price       Float
   isFeatured  Boolean   @default(false)
   isArchived  Boolean   @default(false)
-  sizeId      String    @db.ObjectId// Foreign Key to Size
+  sizeId      BigInt    @db.Int8// Foreign Key to Size
   size        Size      @relation(fields: [sizeId], references: [id])
-  colorId     String    @db.ObjectId// Foreign Key to Color
+  colorId     BigInt    @db.Int8// Foreign Key to Color
   color       Color     @relation(fields: [colorId], references: [id])
   images      Image[]   // Relation to Image model
   orderItems  OrderItem[]   // Relation to Order model
@@ -76,8 +76,8 @@ model Product {
 }
 
 model Order {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  storeId     String    @db.ObjectId
+  id        BigInt    @id @default(autoincrement()) @map("_id") @db.Int8
+  storeId     BigInt    @db.Int8
   store       Store     @relation("StoreToOrder", fields: [storeId], references: [id])
   orderItems OrderItem[] // Relation to OrderItem model
   isPaid     Boolean   @default(false)
@@ -91,10 +91,10 @@ model Order {
 
 // Intermediary for a many-to-many relationship
 model OrderItem {
-  id        String  @id @default(auto()) @map("_id") @db.ObjectId
-  orderId   String  @db.ObjectId
+  id        BigInt  @id @default(autoincrement()) @map("_id") @db.Int8
+  orderId   BigInt  @db.Int8
   order     Order   @relation(fields: [orderId], references: [id])
-  productId String  @db.ObjectId
+  productId BigInt  @db.Int8
   product   Product @relation(fields: [productId], references: [id])
 
   @@index([orderId])
@@ -102,8 +102,8 @@ model OrderItem {
 }
 
 model Size {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  storeId     String    @db.ObjectId
+  id          BigInt    @id @default(autoincrement()) @map("_id") @db.Int8
+  storeId     BigInt    @db.Int8
   store       Store     @relation("StoreToSize", fields: [storeId], references: [id])
   name        String
   value       String
@@ -115,8 +115,8 @@ model Size {
 }
 
 model Color {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  storeId     String   @db.ObjectId
+  id          BigInt   @id @default(autoincrement()) @map("_id") @db.Int8
+  storeId     BigInt   @db.Int8
   store       Store    @relation("StoreToColor", fields: [storeId], references: [id])
   name        String
   value       String
@@ -128,8 +128,8 @@ model Color {
 }
 
 model Image {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  productId   String   @db.ObjectId
+  id          BigInt   @id @default(autoincrement()) @map("_id") @db.Int8
+  productId   BigInt   @db.Int8
   product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   url         String   // URL of the image
   createdAt   DateTime @default(now())
