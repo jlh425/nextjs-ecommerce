@@ -5,7 +5,7 @@ import { BillboardForm } from "./components/billboard-form";
 const BillboardPage = async ({
   params
 }: {
-  params: { billboardId: string }
+  params: { billboardId: bigint }
 }) => {
   const billboard = await prismadb.billboard.findUnique({
     where: {
