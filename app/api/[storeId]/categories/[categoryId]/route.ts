@@ -5,7 +5,7 @@ import prismadb from "@/lib/prismadb";
 
 export async function GET(
   req: Request,
-  { params }: { params: { categoryId: string } }
+  { params }: { params: { categoryId: number } }
 ) {
   try {
     if (!params.categoryId) {
@@ -30,7 +30,7 @@ export async function GET(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { categoryId: string, storeId: string } }
+  { params }: { params: { categoryId: number; storeId: number } }
 ) {
   try {
     const { userId } = auth();
@@ -47,7 +47,7 @@ export async function DELETE(
       where: {
         id: params.storeId,
         userId,
-      }
+      },
     });
 
     if (!storeByUserId) {
@@ -57,12 +57,12 @@ export async function DELETE(
     const category = await prismadb.category.delete({
       where: {
         id: params.categoryId,
-      }
+      },
     });
-  
+
     return NextResponse.json(category);
   } catch (error) {
-    console.log('[CATEGORY_DELETE]', error);
+    console.log("[CATEGORY_DELETE]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };
@@ -70,15 +70,15 @@ export async function DELETE(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { categoryId: string, storeId: string } }
+  { params }: { params: { categoryId: number; storeId: number } }
 ) {
-  try {   
+  try {
     const { userId } = auth();
 
     const body = await req.json();
-    
+
     const { name, billboardId } = body;
-    
+
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
     }
@@ -99,7 +99,7 @@ export async function PATCH(
       where: {
         id: params.storeId,
         userId,
-      }
+      },
     });
 
     if (!storeByUserId) {
@@ -112,13 +112,13 @@ export async function PATCH(
       },
       data: {
         name,
-        billboardId
-      }
+        billboardId,
+      },
     });
-  
+
     return NextResponse.json(category);
   } catch (error) {
-    console.log('[CATEGORY_PATCH]', error);
+    console.log("[CATEGORY_PATCH]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };

@@ -6,7 +6,7 @@ import prismadb from "@/lib/prismadb";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { storeId: string } }
+  { params }: { params: { storeId: number } }
 ) {
   try {
     const { userId } = auth();
@@ -32,13 +32,13 @@ export async function PATCH(
         userId,
       },
       data: {
-        name
-      }
+        name,
+      },
     });
-  
+
     return NextResponse.json(store);
   } catch (error) {
-    console.log('[STORE_PATCH]', error);
+    console.log("[STORE_PATCH]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };

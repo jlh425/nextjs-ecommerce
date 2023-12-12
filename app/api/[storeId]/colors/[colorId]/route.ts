@@ -3,10 +3,7 @@ import { auth } from "@clerk/nextjs";
 
 import prismadb from "@/lib/prismadb";
 
-export async function GET(
-  req: Request,
-  { params }: { params: { colorId: string } }
-) {
+export async function GET(req: Request, { params }: { params: { colorId: number } }) {
   try {
     if (!params.colorId) {
       return new NextResponse("Color id is required", { status: 400 });
@@ -14,20 +11,20 @@ export async function GET(
 
     const color = await prismadb.color.findUnique({
       where: {
-        id: params.colorId
-      }
+        id: params.colorId,
+      },
     });
-  
+
     return NextResponse.json(color);
   } catch (error) {
-    console.log('[COLOR_GET]', error);
+    console.log("[COLOR_GET]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { colorId: string, storeId: string } }
+  { params }: { params: { colorId: number; storeId: number } }
 ) {
   try {
     const { userId } = auth();
@@ -43,8 +40,8 @@ export async function DELETE(
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
-        userId
-      }
+        userId,
+      },
     });
 
     if (!storeByUserId) {
@@ -53,13 +50,13 @@ export async function DELETE(
 
     const color = await prismadb.color.delete({
       where: {
-        id: params.colorId
-      }
+        id: params.colorId,
+      },
     });
-  
+
     return NextResponse.json(color);
   } catch (error) {
-    console.log('[COLOR_DELETE]', error);
+    console.log("[COLOR_DELETE]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };
@@ -67,7 +64,7 @@ export async function DELETE(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { colorId: string, storeId: string } }
+  { params }: { params: { colorId: number; storeId: number } }
 ) {
   try {
     const { userId } = auth();
@@ -88,7 +85,6 @@ export async function PATCH(
       return new NextResponse("Value is required", { status: 400 });
     }
 
-
     if (!params.colorId) {
       return new NextResponse("Color id is required", { status: 400 });
     }
@@ -96,8 +92,8 @@ export async function PATCH(
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
-        userId
-      }
+        userId,
+      },
     });
 
     if (!storeByUserId) {
@@ -106,17 +102,17 @@ export async function PATCH(
 
     const color = await prismadb.color.update({
       where: {
-        id: params.colorId
+        id: params.colorId,
       },
       data: {
         name,
-        value
-      }
+        value,
+      },
     });
-  
+
     return NextResponse.json(color);
   } catch (error) {
-    console.log('[COLOR_PATCH]', error);
+    console.log("[COLOR_PATCH]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };
