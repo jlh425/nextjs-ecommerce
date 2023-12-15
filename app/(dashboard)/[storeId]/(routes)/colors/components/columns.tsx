@@ -5,7 +5,7 @@ import { ColumnDef } from "@tanstack/react-table"
 import { CellAction } from "./cell-action"
 
 export type ColorColumn = {
-  id: string
+  id: integer
   name: string;
   value: string;
   createdAt: string;

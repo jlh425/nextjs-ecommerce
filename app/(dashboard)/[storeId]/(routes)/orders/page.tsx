@@ -10,7 +10,7 @@ import { OrderClient } from "./components/client";
 const OrdersPage = async ({
   params
 }: {
-  params: { storeId: string }
+  params: { storeId: integer }
 }) => {
   const orders = await prismadb.order.findMany({
     where: {

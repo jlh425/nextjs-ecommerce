@@ -9,7 +9,7 @@ import { ProductColumn } from "./components/columns";
 const ProductsPage = async ({
   params
 }: {
-  params: { storeId: string }
+  params: { storeId: integer }
 }) => {
   const products = await prismadb.product.findMany({
     where: {

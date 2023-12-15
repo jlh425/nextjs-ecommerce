@@ -8,7 +8,7 @@ import { BillboardClient } from "./components/client";
 const BillboardsPage = async ({
   params
 }: {
-  params: { storeId: string }
+  params: { storeId: integer }
 }) => {
   const billboards = await prismadb.billboard.findMany({
     where: {

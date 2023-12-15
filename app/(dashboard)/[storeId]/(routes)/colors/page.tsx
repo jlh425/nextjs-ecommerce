@@ -8,7 +8,7 @@ import { ColorClient } from "./components/client";
 const ColorsPage = async ({
   params
 }: {
-  params: { storeId: string }
+  params: { storeId: integer }
 }) => {
   const colors = await prismadb.color.findMany({
     where: {
