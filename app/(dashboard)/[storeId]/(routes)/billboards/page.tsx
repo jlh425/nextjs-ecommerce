@@ -8,7 +8,7 @@ import { BillboardClient } from "./components/client";
 const BillboardsPage = async ({
   params
 }: {
-  params: { storeId: integer }
+  params: { storeId: number }
 }) => {
   const billboards = await prismadb.billboard.findMany({
     where: {
@@ -20,7 +20,7 @@ const BillboardsPage = async ({
   });
 
   const formattedBillboards: BillboardColumn[] = billboards.map((item) => ({
-    id: item.id,
+    id: Number(item.id),
     label: item.label,
     createdAt: format(item.createdAt, 'MMMM do, yyyy'),
   }));

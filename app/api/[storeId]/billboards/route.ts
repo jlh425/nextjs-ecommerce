@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs';
 
 import prismadb from '@/lib/prismadb';
+import { number } from 'zod';
  
 export async function POST(req: Request, { params }: { params: { storeId: number } }) {
   try {
@@ -40,6 +41,7 @@ export async function POST(req: Request, { params }: { params: { storeId: number
 
     const billboard = await prismadb.billboard.create({
       data: {
+        id: label,
         label,
         imageUrl,
         storeId: params.storeId,

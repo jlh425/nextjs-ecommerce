@@ -5,7 +5,7 @@ import { ColumnDef } from "@tanstack/react-table"
 import { CellAction } from "./cell-action"
 
 export type BillboardColumn = {
-  id: integer
+  id: number
   label: string;
   createdAt: string;
 }
