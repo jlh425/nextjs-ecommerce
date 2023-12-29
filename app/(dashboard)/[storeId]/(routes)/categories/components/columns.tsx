@@ -5,7 +5,7 @@ import { ColumnDef } from "@tanstack/react-table"
 import { CellAction } from "./cell-action"
 
 export type CategoryColumn = {
-  id: integer
+  id: number;
   name: string;
   billboardLabel: string;
   createdAt: string;
@@ -19,7 +19,7 @@ export const columns: ColumnDef<CategoryColumn>[] = [
   {
     accessorKey: "billboard",
     header: "Billboard",
-    cell: ({ row }) => row.original.billboardLabel,
+    cell: ({ row } : { row: any }) => row.original.billboardLabel,
   },
   {
     accessorKey: "createdAt",
@@ -27,6 +27,6 @@ export const columns: ColumnDef<CategoryColumn>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => <CellAction data={row.original} />
+    cell: ({ row } : { row: any }) => <CellAction data={row.original} />
   },
 ];

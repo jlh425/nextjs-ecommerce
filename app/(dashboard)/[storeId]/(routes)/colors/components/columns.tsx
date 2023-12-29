@@ -1,11 +1,12 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
+import { ReactNode } from "react"
 
 import { CellAction } from "./cell-action"
 
 export type ColorColumn = {
-  id: integer
+  id: number;
   name: string;
   value: string;
   createdAt: string;
@@ -19,12 +20,12 @@ export const columns: ColumnDef<ColorColumn>[] = [
   {
     accessorKey: "value",
     header: "Value",
-    cell: ({ row }) => (
+    cell: ({ row }: { row: { original: ColorColumn } }): ReactNode => (
       <div className="flex items-center gap-x-2">
         {row.original.value}
         <div className="h-6 w-6 rounded-full border" style={{ backgroundColor: row.original.value }} />
       </div>
-    )
+    ),
   },
   {
     accessorKey: "createdAt",
@@ -32,6 +33,6 @@ export const columns: ColumnDef<ColorColumn>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => <CellAction data={row.original} />
+    cell: ({ row }: { row: { original: ColorColumn } }): ReactNode => <CellAction data={row.original} />,
   },
 ];
