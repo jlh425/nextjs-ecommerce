@@ -45,9 +45,10 @@ export const CellAction: React.FC<CellActionProps> = ({
   };
 
   const onCopy = (id: number) => {
-    navigator.clipboard.writeText(id);
+    navigator.clipboard.writeText(id.toString());
     toast.success('Billboard ID copied to clipboard.');
   }
+
 
   return (
     <>
