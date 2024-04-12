@@ -1,13 +1,13 @@
 import { create } from 'zustand';
 
 interface useActiveStoreInterface {
-  id?: string;
-  set: (id: integer) => void;
+  id?: number;
+  set: (id: number) => void;
   reset: () => void;
 }
 
 export const useActiveStore = create<useActiveStoreInterface>((set) => ({
   id: undefined,
-  set: (id: integer) => set({ id }),
+  set: (id: number) => set({ id }),
   reset: () => set({ id: undefined }),
 }));
