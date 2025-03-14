@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs';
-
+import JSONbig from "json-bigint";
 import prismadb from '@/lib/prismadb';
 
 export async function POST(
@@ -24,10 +24,15 @@ export async function POST(
       data: {
         name,
         userId,
-      }
+      },
     });
-  
-    return NextResponse.json(store);
+
+    // Use JSONbig to stringify the response
+    const jsonString = JSONbig.stringify(store);
+
+    return new NextResponse(jsonString, {
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (error) {
     console.log('[STORES_POST]', error);
     return new NextResponse("Internal error", { status: 500 });
