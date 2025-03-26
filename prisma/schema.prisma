@@ -8,21 +8,21 @@ datasource db {
 }
 
 model Store {
-  id                BigInt            @id @default(autoincrement()) @map("_id")
-  name              String
-  userId            String
-  billboards        Billboard[]       @relation("StoreToBillboard")
-  categories        Category[]        @relation("StoreToCategory")
-  products          Product[]         @relation("StoreToProduct")
-  sizes             Size[]            @relation("StoreToSize")
-  aiModels          AIModel[]         @relation("StoreToAIModel")
-  learningTypes     LearningType[]    @relation("StoreToLearningType") // Relation to LearningType
+  id              BigInt            @id @default(autoincrement()) @map("_id")
+  name            String
+  userId          String
+  billboards      Billboard[]       @relation("StoreToBillboard")
+  categories      Category[]        @relation("StoreToCategory")
+  products        Product[]         @relation("StoreToProduct")
+  sizes           Size[]            @relation("StoreToSize")
+  aiModels        AIModel[]         @relation("StoreToAIModel")
+  learningTypes   LearningType[]    @relation("StoreToLearningType") // Relation to LearningType
   taskSpecificity TaskSpecificity[] @relation("StoreToTaskSpecificity") // Relation to TaskSpecificity
-  processingTypes   ProcessingType[]  @relation("StoreToProcessingType") // Relation to ProcessingType
-  //* colors          Color[]     @relation("StoreToColor")
-  orders            Order[]           @relation("StoreToOrder")
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
+  processingTypes ProcessingType[]  @relation("StoreToProcessingType") // Relation to ProcessingType
+  colors          Color[]           @relation("StoreToColor")
+  orders          Order[]           @relation("StoreToOrder")
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
 }
 
 model Billboard {
@@ -46,6 +46,7 @@ model Category {
   billboard   Billboard @relation(fields: [billboardId], references: [id])
   name        String
   products    Product[] @relation("CategoryToProduct")
+  aiModels    AIModel[] @relation("CategoryToAIModel") // Opposite relation to AIModel
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -65,14 +66,14 @@ model Product {
   isArchived Boolean     @default(false)
   sizeId     BigInt      @db.Int8 // Foreign Key to Size
   size       Size        @relation(fields: [sizeId], references: [id])
-  //*  colorId     BigInt    @db.Int8// Foreign Key to Color
-  //*  color       Color     @relation(fields: [colorId], references: [id])
+  colorId    BigInt      @db.Int8 // Foreign Key to Color
+  color      Color       @relation(fields: [colorId], references: [id])
   images     Image[] // Relation to Image model
   orderItems OrderItem[] // Relation to Order model
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
-  //*@@index([colorId])
 
+  @@index([colorId])
   @@index([storeId])
   @@index([categoryId])
   @@index([sizeId])
@@ -83,6 +84,8 @@ model AIModel {
   id                BigInt          @id @default(autoincrement()) @map("_id") @db.Int8
   storeId           BigInt          @db.Int8 // Foreign Key to Store
   store             Store           @relation("StoreToAIModel", fields: [storeId], references: [id])
+  categoryId        BigInt          @db.Int8 // Foreign Key to Category
+  category          Category        @relation("CategoryToAIModel", fields: [categoryId], references: [id])
   name              String
   description       String?
   price             Float
@@ -143,7 +146,7 @@ model LearningType {
   description String?
   store       Store     @relation("StoreToLearningType", fields: [storeId], references: [id]) // Relation to Store
   storeId     BigInt    @db.Int8
-  models      AIModel[] @relation("LearningTypeToAIModel") // Relation to AIModel
+  AIModels    AIModel[] @relation("LearningTypeToAIModel") // Relation to AIModel
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
@@ -156,7 +159,7 @@ model TaskSpecificity {
   label       String?
   storeId     BigInt    @db.Int8
   store       Store     @relation("StoreToTaskSpecificity", fields: [storeId], references: [id]) // Opposite relation to Store
-  models      AIModel[] @relation("TaskSpecificityToAIModel") // Relation to AI models with this specificity
+  AIModels    AIModel[] @relation("TaskSpecificityToAIModel") // Relation to AI models with this specificity
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
@@ -168,7 +171,7 @@ model ProcessingType {
   description String?
   storeId     BigInt    @db.Int8
   store       Store     @relation("StoreToProcessingType", fields: [storeId], references: [id]) // Opposite relation to Store
-  models      AIModel[] @relation("ProcessingTypeToAIModel") // Relation to AI models with this processing type
+  AIModels    AIModel[] @relation("ProcessingTypeToAIModel") // Relation to AI models with this processing type
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
@@ -180,25 +183,25 @@ model Size {
   name      String
   value     String
   products  Product[] // Relation to Product model
-  aiModels  AIModel[] // Relation to AIModel model
+  AIModels  AIModel[] // Relation to AIModel model
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
   @@index([storeId])
 }
 
-//*model Color {
-//*  id          BigInt   @id @default(autoincrement()) @map("_id") @db.Int8
-//*  storeId     BigInt   @db.Int8
-//*  store       Store    @relation("StoreToColor", fields: [storeId], references: [id])
-//*  name        String
-//*  value       String
-//*  products    Product[] // Relation to Product model
-//*  createdAt   DateTime  @default(now())
-//*  updatedAt   DateTime  @updatedAt
+model Color {
+  id        BigInt    @id @default(autoincrement()) @map("_id") @db.Int8
+  storeId   BigInt    @db.Int8
+  store     Store     @relation("StoreToColor", fields: [storeId], references: [id])
+  name      String
+  value     String
+  products  Product[] // Relation to Product model
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
-//*  @@index([storeId])
-//*}
+  @@index([storeId])
+}
 
 model Image {
   id        BigInt   @id @default(autoincrement()) @map("_id") @db.Int8

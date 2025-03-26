@@ -12,12 +12,13 @@ export async function GET(
       return new NextResponse("aimodel id is required", { status: 400 });
     }
 
-    const aimodel = await prismadb.AIModel.findUnique({
+    const aimodel = await prismadb.aIModel.findUnique({
       where: {
         id: params.aimodelId,
       },
       include: {
-        billboard: true,
+        images: true,
+        category: true,
       },
     });
 
@@ -54,7 +55,7 @@ export async function DELETE(
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
-    const aimodel = await prismadb.AIModel.delete({
+    const aimodel = await prismadb.aIModel.delete({
       where: {
         id: params.aimodelId,
       },
@@ -76,7 +77,19 @@ export async function PATCH(
 
     const body = await req.json();
 
-    const { name, billboardId } = body;
+    const {
+      name,
+      description,
+      price,
+      isFeatured,
+      isArchived,
+      learningTypeId,
+      taskSpecificityId,
+      processingTypeId,
+      sizeId,
+      billboardId,
+      categoryId,
+    } = body;
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
@@ -105,13 +118,32 @@ export async function PATCH(
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
-    const aimodel = await prismadb.AIModel.update({
+    const aimodel = await prismadb.aIModel.update({
       where: {
         id: params.aimodelId,
       },
       data: {
-        name,
-        billboardId,
+        name: name,
+        description: "discription here", // Optional field
+        price,
+        isFeatured: false, // Default value
+        isArchived: false, // Default value
+        category: { connect: { id: body.categoryId } }, // Connect to existing Category
+        learningType: {
+          connect: { id: body.learningTypeId }, // Connect to existing LearningType
+        },
+        taskSpecificity: {
+          connect: { id: body.taskSpecificityId }, // Connect to existing TaskSpecificity
+        },
+        processingType: {
+          connect: { id: body.processingTypeId }, // Connect to existing ProcessingType
+        },
+        size: {
+          connect: { id: body.sizeId }, // Connect to existing Size
+        },
+        store: {
+          connect: { id: params.storeId }, // Connect to the related Store
+        },
       },
     });
 

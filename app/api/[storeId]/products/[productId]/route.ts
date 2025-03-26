@@ -20,7 +20,7 @@ export async function GET(
         images: true,
         category: true,
         size: true,
-        color: true,
+       //* color: true,
       },
     });
 
@@ -142,7 +142,7 @@ export async function PATCH(
         name,
         price,
         categoryId,
-        colorId,
+        //*colorId,
         sizeId,
         images: {
           deleteMany: {},
