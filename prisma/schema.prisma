@@ -21,6 +21,7 @@ model Store {
   processingTypes ProcessingType[]  @relation("StoreToProcessingType") // Relation to ProcessingType
   colors          Color[]           @relation("StoreToColor")
   orders          Order[]           @relation("StoreToOrder")
+  agents          agent[]           @relation("StoreToAgent")
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
 }
@@ -32,6 +33,7 @@ model Billboard {
   label      String
   imageUrl   String
   categories Category[]
+  aiModels   AIModel[]
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
 
@@ -46,7 +48,6 @@ model Category {
   billboard   Billboard @relation(fields: [billboardId], references: [id])
   name        String
   products    Product[] @relation("CategoryToProduct")
-  aiModels    AIModel[] @relation("CategoryToAIModel") // Opposite relation to AIModel
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -79,36 +80,52 @@ model Product {
   @@index([sizeId])
 }
 
-// Base AI Model
-model AIModel {
+model agent {
   id                BigInt          @id @default(autoincrement()) @map("_id") @db.Int8
   storeId           BigInt          @db.Int8 // Foreign Key to Store
-  store             Store           @relation("StoreToAIModel", fields: [storeId], references: [id])
-  categoryId        BigInt          @db.Int8 // Foreign Key to Category
-  category          Category        @relation("CategoryToAIModel", fields: [categoryId], references: [id])
+  store             Store           @relation("StoreToAgent", fields: [storeId], references: [id])
+  aiModelId         BigInt          @db.Int8 // Foreign Key to AIModel
+  aiModel           AIModel         @relation("AIModelToAgent", fields: [aiModelId], references: [id])
   name              String
-  description       String?
   price             Float
   isFeatured        Boolean         @default(false)
   isArchived        Boolean         @default(false)
-  learningTypeId    BigInt          @db.Int8
-  learningType      LearningType    @relation("LearningTypeToAIModel", fields: [learningTypeId], references: [id])
-  taskSpecificityId BigInt          @db.Int8
-  taskSpecificity   TaskSpecificity @relation("TaskSpecificityToAIModel", fields: [taskSpecificityId], references: [id])
-  processingTypeId  BigInt          @db.Int8
-  processingType    ProcessingType  @relation("ProcessingTypeToAIModel", fields: [processingTypeId], references: [id])
   sizeId            BigInt          @db.Int8 // Foreign Key to Size
   size              Size            @relation(fields: [sizeId], references: [id])
+  learningTypeId    BigInt          @db.Int8
+  learningType      LearningType    @relation("LearningTypeToAgent", fields: [learningTypeId], references: [id])
+  taskSpecificityId BigInt          @db.Int8
+  taskSpecificity   TaskSpecificity @relation("TaskSpecificityToAgent", fields: [taskSpecificityId], references: [id])
+  processingTypeId  BigInt          @db.Int8
+  processingType    ProcessingType  @relation("AgentToProcessingType", fields: [processingTypeId], references: [id])
   images            Image[] // Relation to Image model
   orderItems        OrderItem[] // Relation to Order model
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
 
   @@index([storeId])
+  @@index([aiModelId])
   @@index([learningTypeId])
-  @@index([processingTypeId])
   @@index([taskSpecificityId])
   @@index([sizeId])
+}
+
+// Base AI Model
+model AIModel {
+  id          BigInt    @id @default(autoincrement()) @map("_id") @db.Int8
+  storeId     BigInt    @db.Int8 // Foreign Key to Store
+  store       Store     @relation("StoreToAIModel", fields: [storeId], references: [id])
+  billboardId BigInt    @db.Int8 // Foreign Key to Billboard
+  billboard   Billboard @relation(fields: [billboardId], references: [id])
+  name        String
+  agent       agent[]   @relation("AIModelToAgent") // Relation to agent model
+  isFeatured  Boolean   @default(false)
+  isArchived  Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([storeId])
+  @@index([billboardId])
 }
 
 model Order {
@@ -132,8 +149,8 @@ model OrderItem {
   order     Order   @relation(fields: [orderId], references: [id])
   productId BigInt  @db.Int8
   product   Product @relation(fields: [productId], references: [id])
-  AIModelId BigInt  @db.Int8
-  AIModel   AIModel @relation(fields: [AIModelId], references: [id])
+  agentId   BigInt  @db.Int8
+  agent     agent   @relation(fields: [agentId], references: [id])
 
   @@index([orderId])
   @@index([productId])
@@ -141,39 +158,44 @@ model OrderItem {
 
 // Model for "Type of Learning"
 model LearningType {
-  id          BigInt    @id @default(autoincrement()) @map("_id") @db.Int8
+  id          BigInt   @id @default(autoincrement()) @map("_id") @db.Int8
   type        String // e.g., Supervised, Unsupervised, Reinforcement, etc.
   description String?
-  store       Store     @relation("StoreToLearningType", fields: [storeId], references: [id]) // Relation to Store
-  storeId     BigInt    @db.Int8
-  AIModels    AIModel[] @relation("LearningTypeToAIModel") // Relation to AIModel
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  store       Store    @relation("StoreToLearningType", fields: [storeId], references: [id]) // Relation to Store
+  storeId     BigInt   @db.Int8
+  agents      agent[]  @relation("LearningTypeToAgent") // Relation to agents with this learning type
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([storeId])
 }
 
 // Model for "Task-Specific vs. General-Purpose" (Characteristic 7)
 model TaskSpecificity {
-  id          BigInt    @id @default(autoincrement()) @map("_id") @db.Int8
+  id          BigInt   @id @default(autoincrement()) @map("_id") @db.Int8
   type        String // e.g., Task-Specific, General-Purpose
   description String?
-  label       String?
-  storeId     BigInt    @db.Int8
-  store       Store     @relation("StoreToTaskSpecificity", fields: [storeId], references: [id]) // Opposite relation to Store
-  AIModels    AIModel[] @relation("TaskSpecificityToAIModel") // Relation to AI models with this specificity
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  storeId     BigInt   @db.Int8
+  store       Store    @relation("StoreToTaskSpecificity", fields: [storeId], references: [id]) // Opposite relation to Store
+  agents      agent[]  @relation("TaskSpecificityToAgent") // Relation to agents with this task specificity
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([storeId])
 }
 
 // Model for "Real-Time vs. Batch Processing" (Characteristic 9)
 model ProcessingType {
-  id          BigInt    @id @default(autoincrement()) @map("_id") @db.Int8
+  id          BigInt   @id @default(autoincrement()) @map("_id") @db.Int8
   type        String // e.g., Real-Time, Batch Processing
   description String?
-  storeId     BigInt    @db.Int8
-  store       Store     @relation("StoreToProcessingType", fields: [storeId], references: [id]) // Opposite relation to Store
-  AIModels    AIModel[] @relation("ProcessingTypeToAIModel") // Relation to AI models with this processing type
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  storeId     BigInt   @db.Int8
+  store       Store    @relation("StoreToProcessingType", fields: [storeId], references: [id]) // Opposite relation to Store
+  agents      agent[]  @relation("AgentToProcessingType") // Relation to agents with this processing type
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([storeId])
 }
 
 model Size {
@@ -183,7 +205,7 @@ model Size {
   name      String
   value     String
   products  Product[] // Relation to Product model
-  AIModels  AIModel[] // Relation to AIModel model
+  agents    agent[] // Relation to agent model
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
@@ -207,8 +229,8 @@ model Image {
   id        BigInt   @id @default(autoincrement()) @map("_id") @db.Int8
   productId BigInt   @db.Int8
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  aiModelId BigInt   @db.Int8
-  aiModel   AIModel  @relation(fields: [aiModelId], references: [id], onDelete: Cascade)
+  agentId   BigInt   @db.Int8
+  agent     agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
   url       String // URL of the image
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

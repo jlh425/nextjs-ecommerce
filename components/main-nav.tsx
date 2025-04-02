@@ -29,14 +29,24 @@ export function MainNav({
       active: pathname === `/${params.storeId}/categories`,
     },
     {
+      href: `/${params.storeId}/aimodels`,
+      label: 'AI Models',
+      active: pathname === `/${params.storeId}/aimodels`,
+    },
+    {
+      href: `/${params.storeId}/learningtypes`,
+      label: 'Learning Types',
+      active: pathname === `/${params.storeId}/learningtypes`,
+    },
+    {
+      href: `/${params.storeId}/taskspecificity`,
+      label: 'Tasks Specificity',
+      active: pathname === `/${params.storeId}/taskspecificity`,
+    },
+    {
       href: `/${params.storeId}/sizes`,
       label: 'Sizes',
       active: pathname === `/${params.storeId}/sizes`,
-    },
-    {
-      href: `/${params.storeId}/colors`,
-      label: 'Colors',
-      active: pathname === `/${params.storeId}/colors`,
     },
     {
       href: `/${params.storeId}/products`,
