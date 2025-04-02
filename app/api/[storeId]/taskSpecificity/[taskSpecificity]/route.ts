@@ -75,14 +75,14 @@ export async function PATCH(
 
     const body = await req.json();
 
-    const { label, imageUrl } = body;
+    const { type, imageUrl } = body;
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
     }
 
-    if (!label) {
-      return new NextResponse("Label is required", { status: 400 });
+    if (!type) {
+      return new NextResponse("Type is required", { status: 400 });
     }
 
     if (!imageUrl) {
@@ -111,7 +111,7 @@ export async function PATCH(
         id: params.taskSpecificityId,
       },
       data: {
-        label,
+        type,
         
       },
     });
