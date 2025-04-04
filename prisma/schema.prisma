@@ -22,6 +22,7 @@ model Store {
   colors          Color[]           @relation("StoreToColor")
   orders          Order[]           @relation("StoreToOrder")
   agents          agent[]           @relation("StoreToAgent")
+  tools           tool[]            @relation("StoreToTool")
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
 }
@@ -100,6 +101,7 @@ model agent {
   processingType    ProcessingType  @relation("AgentToProcessingType", fields: [processingTypeId], references: [id])
   images            Image[] // Relation to Image model
   orderItems        OrderItem[] // Relation to Order model
+  tools             tool[] // Relation to tool model
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
 
@@ -108,6 +110,7 @@ model agent {
   @@index([learningTypeId])
   @@index([taskSpecificityId])
   @@index([sizeId])
+  @@index([processingTypeId])
 }
 
 // Base AI Model
@@ -208,6 +211,19 @@ model Size {
   agents    agent[] // Relation to agent model
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+
+  @@index([storeId])
+}
+
+model tool {
+  id        BigInt   @id @default(autoincrement()) @map("_id") @db.Int8
+  storeId   BigInt   @db.Int8
+  store     Store    @relation("StoreToTool", fields: [storeId], references: [id])
+  name      String
+  value     String
+  agents    agent[] // Relation to agent model
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([storeId])
 }

@@ -54,7 +54,6 @@ export const AIModelForm: React.FC<AIModelFormProps> = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: initialData?.name || "",
-      description: initialData?.description || "", // Convert null to an empty string
       
     },
   });
