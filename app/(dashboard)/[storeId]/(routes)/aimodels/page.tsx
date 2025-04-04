@@ -20,8 +20,7 @@ const AiModelsPage = async ({
 
   const formattedAiModels: AiModelColumn[] = aiModels.map((item) => ({
     id: Number(item.id),
-    name: item.name,
-    description: item.description || "",
+    name: item.name,    
     createdAt: format(item.createdAt, 'MMMM do, yyyy'),
   }));
 
