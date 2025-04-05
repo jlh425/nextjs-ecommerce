@@ -22,7 +22,7 @@ export const columns: ColumnDef<LearningTypeColumn>[] = [
         cell: ({ row }: { row: { original: LearningTypeColumn } }): ReactNode => (
             <div className="flex items-center gap-x-2">
                 {row.original.description}
-            <div className="h-6 w-6 rounded-full border" style={{ backgroundColor: row.original.value }} />
+            <div className="h-6 w-6 rounded-full border" style={{ backgroundColor: row.original.description }} />
             </div>
         ),
     },
