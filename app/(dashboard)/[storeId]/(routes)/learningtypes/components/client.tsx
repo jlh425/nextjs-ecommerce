@@ -9,18 +9,12 @@ import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 import { ApiList } from "@/components/ui/api-list";
 
-import { columns } from "./columns";
+import { columns, LearningTypeColumn } from "./columns";
 import { LearningType } from "@prisma/client";
 
-interface LearningTypeColumn {
-    id: number;
-    type: string;
-    description: string;
-    createdAt: string;
-    }
 
 interface LearningTypeClientProps {
-  data: LearningType[];
+  data: LearningTypeColumn[];
 }
 
 export const LearningTypeClient: React.FC<LearningTypeClientProps> = ({
@@ -28,12 +22,7 @@ export const LearningTypeClient: React.FC<LearningTypeClientProps> = ({
 }) => {
   const params = useParams();
   const router = useRouter();
-    const formattedData: LearningTypeColumn[] = data.map((item) => ({
-        id: Number(item.id),
-        type: item.type,
-        description: item.description || "No description",
-        createdAt: item.createdAt.toISOString(),
-    }));
+  
 
   return (
     <>
@@ -44,7 +33,7 @@ export const LearningTypeClient: React.FC<LearningTypeClientProps> = ({
         </Button>
       </div>
       <Separator />
-      <DataTable searchKey="name" columns={columns} data={formattedData} />
+      <DataTable searchKey="name" columns={columns} data={data} />
       <Heading title="API" description="API Calls for Learning Types" />
       <Separator />
       <ApiList entityName="learningtypes" entityIdName="learningTypeId" />
