@@ -6,10 +6,12 @@ import { ReactNode } from "react"
 import { CellAction } from "./cell-action"
 
 export type LearningTypeColumn = {
-    id: number;
-    type: string;
-    description: string;
+    id: bigint;
     createdAt: string;
+    updatedAt: string;
+    storeId: bigint;
+    type: string;
+    description: string | 'No description';
 }
 export const columns: ColumnDef<LearningTypeColumn>[] = [
     {

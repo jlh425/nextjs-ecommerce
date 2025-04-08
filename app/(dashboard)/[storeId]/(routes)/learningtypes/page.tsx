@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import prismadb from "@/lib/prismadb";
 import { LearningTypeColumn } from "./components/columns";
 import { LearningTypeClient } from "./components/client";
-import { number } from "zod";
+
 
 const LearningTypesPage = async ({
   params,
@@ -19,10 +19,12 @@ const LearningTypesPage = async ({
   });
 
   const formattedLearningTypes: LearningTypeColumn[] = learningTypes.map((item) => ({
-    id: item.id,
-    name: item.type,
-    description: item.description? item.description : "No description",
-    createdAt: format(item.createdAt, "MMMM do, yyyy"),
+    id: item.id, // Convert bigint to number
+    type: item.type,
+    description: item.description || "No description", // Handle null description
+    createdAt: format(item.createdAt, "MMMM do, yyyy"), // Format Date to string
+    updatedAt: format(item.updatedAt, "MMMM do, yyyy"), // Format Date to string
+    storeId: item.storeId, // Convert bigint to number
   }));
 
   return (
