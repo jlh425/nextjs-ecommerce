@@ -8,7 +8,7 @@ import { SettingsForm } from "./components/settings-form";
 const SettingsPage = async ({
   params
 }: {
-  params: { storeId: integer }
+  params: { storeId: bigint }
 }) => {
   const { userId } = auth();
 

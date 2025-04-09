@@ -5,7 +5,7 @@ import { ColumnDef } from "@tanstack/react-table"
 import { CellAction } from "./cell-action"
 
 export type SizeColumn = {
-  id: number;
+  id: bigint;
   name: string;
   value: string;
   createdAt: string;

@@ -8,7 +8,7 @@ import { SizesClient } from "./components/client";
 const SizesPage = async ({
   params
 }: {
-  params: { storeId: integer }
+  params: { storeId: bigint }
 }) => {
   const sizes = await prismadb.size.findMany({
     where: {
