@@ -43,7 +43,7 @@ export const CellAction: React.FC<CellActionProps> = ({
         setLoading(false);
     }
   };
-    const onCopy = (id: number) => {
+    const onCopy = (id: bigint) => {
         navigator.clipboard.writeText(id.toString());
         toast.success('Learning type ID copied to clipboard.');
     }
