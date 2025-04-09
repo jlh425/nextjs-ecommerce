@@ -5,14 +5,14 @@ import prismadb from "@/lib/prismadb";
 
 export async function GET(
   req: Request,
-  { params }: { params: { learningTypesId: number } }
+  { params }: { params: { learningTypesId: bigint } }
 ) {
   try {
     if (!params.learningTypesId) {
       return new NextResponse("learningTypes id is required", { status: 400 });
     }
 
-    const learningTypes = await prismadb.learningTypes.findUnique({
+    const learningTypes = await prismadb.learningType.findUnique({
       where: {
         id: params.learningTypesId,
       },
@@ -27,7 +27,7 @@ export async function GET(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { learningTypesId: number; storeId: number } }
+  { params }: { params: { learningTypesId: bigint; storeId: bigint } }
 ) {
   try {
     const { userId } = auth();
@@ -51,7 +51,7 @@ export async function DELETE(
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
-    const learningTypes = await prismadb.learningTypes.delete({
+    const learningTypes = await prismadb.learningType.delete({
       where: {
         id: params.learningTypesId,
       },
@@ -59,32 +59,28 @@ export async function DELETE(
 
     return NextResponse.json(learningTypes);
   } catch (error) {
-    console.log("[LEARNINGTYPES]_DELETE]", error);
+    console.log("[LEARNINGTYPES_DELETE]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
 }
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { learningTypesId: number; storeId: number } }
+  { params }: { params: { learningTypesId:bigint; storeId:bigint } }
 ) {
   try {
     const { userId } = auth();
 
     const body = await req.json();
 
-    const { label, imageUrl } = body;
+    const { type, description } = body;
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
     }
 
-    if (!label) {
-      return new NextResponse("Label is required", { status: 400 });
-    }
-
-    if (!imageUrl) {
-      return new NextResponse("Image URL is required", { status: 400 });
+    if (!type) {
+      return new NextResponse("type is required", { status: 400 });
     }
 
     if (!params.learningTypesId) {
@@ -102,13 +98,13 @@ export async function PATCH(
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
-    const learningTypes = await prismadb.learningTypes.update({
+    const learningTypes = await prismadb.learningType.update({
       where: {
         id: params.learningTypesId,
       },
       data: {
-        label,
-        imageUrl,
+        type,
+        
       },
     });
 

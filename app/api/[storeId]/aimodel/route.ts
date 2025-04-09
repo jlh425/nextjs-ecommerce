@@ -11,17 +11,12 @@ export async function POST(req: Request, { params }: { params: { storeId: number
     const body = await req.json();
 
     const {
-      name,
-      description,
-      price,
+      name,      
       isFeatured,
       isArchived,
-      learningTypeId,
-      taskSpecificityId,
-      processingTypeId,
-      sizeId,
-      billboardId,
-      categoryId
+      billboardId, 
+      agentId,
+      storeId
     } = body;
 
     if (!userId) {
@@ -31,23 +26,7 @@ export async function POST(req: Request, { params }: { params: { storeId: number
     if (!name) {
       return new NextResponse("Name is required", { status: 400 });
     }
-
-    if (!learningTypeId) {
-      return new NextResponse("Learning Type ID is required", { status: 400 });
-    }
-
-    if (!taskSpecificityId) {
-      return new NextResponse("Task Specificity ID is required", { status: 400 });
-    }
-
-    if (!processingTypeId) {
-      return new NextResponse("Processing Type ID is required", { status: 400 });
-    }
-
-    if (!sizeId) {
-      return new NextResponse("Size ID is required", { status: 400 });
-    }
-
+    
     if (!billboardId) {
       return new NextResponse("Billboard ID is required", { status: 400 });
     }
@@ -69,24 +48,11 @@ export async function POST(req: Request, { params }: { params: { storeId: number
 
     const aiModel = await prismadb.aIModel.create({
       data: {
-        name: name,
-        description: "discription here", // Optional field
-        price,
+        name: name,       
         isFeatured: false, // Default value
         isArchived: false, // Default value
-        category: { connect: { id: body.categoryId } }, // Connect to existing Category
-        learningType: {
-          connect: { id: body.learningTypeId }, // Connect to existing LearningType
-        },
-        taskSpecificity: {
-          connect: { id: body.taskSpecificityId }, // Connect to existing TaskSpecificity
-        },
-        processingType: {
-          connect: { id: body.processingTypeId }, // Connect to existing ProcessingType
-        },
-        size: {
-          connect: { id: body.sizeId }, // Connect to existing Size
-        },
+        billboard: { connect: { id: body.billboardId } }, 
+        agent: { connect: { id: body.agentId } },       
         store: {
           connect: { id: params.storeId }, // Connect to the related Store
         },

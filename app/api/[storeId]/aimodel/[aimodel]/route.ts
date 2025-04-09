@@ -17,8 +17,8 @@ export async function GET(
         id: params.aimodelId,
       },
       include: {
-        images: true,
-        category: true,
+        billboard: true,
+        agent: true,
       },
     });
 
@@ -123,24 +123,11 @@ export async function PATCH(
         id: params.aimodelId,
       },
       data: {
-        name: name,
-        description: "discription here", // Optional field
-        price,
+        name: name, 
+        
         isFeatured: false, // Default value
         isArchived: false, // Default value
-        category: { connect: { id: body.categoryId } }, // Connect to existing Category
-        learningType: {
-          connect: { id: body.learningTypeId }, // Connect to existing LearningType
-        },
-        taskSpecificity: {
-          connect: { id: body.taskSpecificityId }, // Connect to existing TaskSpecificity
-        },
-        processingType: {
-          connect: { id: body.processingTypeId }, // Connect to existing ProcessingType
-        },
-        size: {
-          connect: { id: body.sizeId }, // Connect to existing Size
-        },
+        agent: { connect: { id: body.agentId } }, // Connect to existing Category        
         store: {
           connect: { id: params.storeId }, // Connect to the related Store
         },

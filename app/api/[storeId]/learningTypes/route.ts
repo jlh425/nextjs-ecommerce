@@ -6,25 +6,21 @@ import { number } from "zod";
 
 export async function POST(
   req: Request,
-  { params }: { params: { storeId: number } }
+  { params }: { params: { storeId: bigint } }
 ) {
   try {
     const { userId } = auth();
 
     const body = await req.json();
 
-    const { label, imageUrl } = body;
+    const { id, type, description } = body;
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
     }
 
-    if (!label) {
+    if (!type) {
       return new NextResponse("Label is required", { status: 400 });
-    }
-
-    if (!imageUrl) {
-      return new NextResponse("Image URL is required", { status: 400 });
     }
 
     if (!params.storeId) {
@@ -42,12 +38,15 @@ export async function POST(
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
-    const learningTypes = await prismadb.learningTypes.create({
+    const learningTypes = await prismadb.learningType.create({
       data: {
-        id: label,
-        label,
-        imageUrl,
-        storeId: params.storeId,
+        id: body.id,
+        type: body.type,
+        description: body.description,
+        store: {
+          connect: { id: params.storeId }, // Connect to the related Store
+        },
+        
       },
     });
 
@@ -60,14 +59,14 @@ export async function POST(
 
 export async function GET(
   req: Request,
-  { params }: { params: { storeId: number } }
+  { params }: { params: { storeId: bigint } }
 ) {
   try {
     if (!params.storeId) {
       return new NextResponse("Store id is required", { status: 400 });
     }
 
-    const learningTypes = await prismadb.learningTypes.findMany({
+    const learningTypes = await prismadb.learningType.findMany({
       where: {
         storeId: params.storeId,
       },
