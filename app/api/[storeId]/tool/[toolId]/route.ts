@@ -3,10 +3,7 @@ import { auth } from "@clerk/nextjs";
 
 import prismadb from "@/lib/prismadb";
 
-export async function GET(
-  req: Request,
-  { params }: { params: { toolId: number } }
-) {
+export async function GET(req: Request, { params }: { params: { toolId: bigint } }) {
   try {
     if (!params.toolId) {
       return new NextResponse("Tool id is required", { status: 400 });
@@ -27,7 +24,7 @@ export async function GET(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: {  toolId: number; storeId: number } }
+  { params }: { params: { toolId: bigint; storeId: bigint } }
 ) {
   try {
     const { userId } = auth();
@@ -66,7 +63,7 @@ export async function DELETE(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { toolId: number; storeId: number } }
+  { params }: { params: { toolId: bigint; storeId: bigint } }
 ) {
   try {
     const { userId } = auth();
@@ -109,6 +106,7 @@ export async function PATCH(
       data: {
         name,
         value,
+      
       },
     });
 

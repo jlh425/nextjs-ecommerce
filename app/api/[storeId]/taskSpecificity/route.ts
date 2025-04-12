@@ -4,28 +4,21 @@ import { auth } from "@clerk/nextjs";
 import prismadb from "@/lib/prismadb";
 import { number } from "zod";
 
-export async function POST(
-  req: Request,
-  { params }: { params: { storeId: number } }
-) {
+export async function POST(req: Request, { params }: { params: { storeId: bigint } }) {
   try {
     const { userId } = auth();
 
     const body = await req.json();
 
-    const { label, imageUrl } = body;
+    const { type, description } = body;
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
     }
 
-    if (!label) {
-      return new NextResponse("Label is required", { status: 400 });
-    }
-
-    if (!imageUrl) {
-      return new NextResponse("Image URL is required", { status: 400 });
-    }
+    if (!type) {
+      return new NextResponse("Type is required", { status: 400 });
+    }    
 
     if (!params.storeId) {
       return new NextResponse("Store id is required", { status: 400 });
@@ -44,8 +37,8 @@ export async function POST(
 
     const taskSpecificity = await prismadb.taskSpecificity.create({
       data: {
-        label,
-        type: "Task-Specific", // Example value
+        type: body.tpye, // Example value
+        description: body.description || null, // Example value
         store: {
           connect: { id: params.storeId }, // Connect to the related store
         },
@@ -54,15 +47,12 @@ export async function POST(
 
     return NextResponse.json(taskSpecificity);
   } catch (error) {
-    console.log("[BILLBOARDS_POST]", error);
+    console.log("[TASKSPECIFICITY_ERROR]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
 }
 
-export async function GET(
-  req: Request,
-  { params }: { params: { storeId: number } }
-) {
+export async function GET(req: Request, { params }: { params: { storeId: bigint } }) {
   try {
     if (!params.storeId) {
       return new NextResponse("Store id is required", { status: 400 });
@@ -76,7 +66,7 @@ export async function GET(
 
     return NextResponse.json(taskSpecificity);
   } catch (error) {
-    console.log("[BILLBOARDS_GET]", error);
+    console.log("[TASKSPECIFICITY_GET]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
 }

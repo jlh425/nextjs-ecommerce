@@ -5,11 +5,13 @@ import prismadb from "@/lib/prismadb";
 
 export async function GET(
   req: Request,
-  { params }: { params: { taskSpecificityId: number } }
+  { params }: { params: { taskSpecificityId: bigint } }
 ) {
   try {
     if (!params.taskSpecificityId) {
-      return new NextResponse("taskSpecificities id is required", { status: 400 });
+      return new NextResponse("taskSpecificities id is required", {
+        status: 400,
+      });
     }
 
     const taskSpecificity = await prismadb.taskSpecificity.findUnique({
@@ -27,7 +29,7 @@ export async function GET(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { taskSpecificityId: number; storeId: number } }
+  { params }: { params: { taskSpecificityId: bigint; storeId: bigint } }
 ) {
   try {
     const { userId } = auth();
@@ -68,7 +70,7 @@ export async function DELETE(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { taskSpecificityId: number; storeId: number } }
+  { params }: { params: { taskSpecificityId: bigint; storeId: bigint } }
 ) {
   try {
     const { userId } = auth();
@@ -112,6 +114,7 @@ export async function PATCH(
       },
       data: {
         type,
+        description: body.description || null,
         
       },
     });
