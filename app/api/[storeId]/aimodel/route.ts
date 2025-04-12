@@ -4,7 +4,7 @@ import { auth } from '@clerk/nextjs';
 import prismadb from '@/lib/prismadb';
 import { number } from 'zod';
  
-export async function POST(req: Request, { params }: { params: { storeId: number } }) {
+export async function POST(req: Request, { params }: { params: { storeId: bigint } }) {
   try {
     const { userId } = auth();
 
@@ -12,11 +12,9 @@ export async function POST(req: Request, { params }: { params: { storeId: number
 
     const {
       name,      
-      isFeatured,
-      isArchived,
-      billboardId, 
       agentId,
-      storeId
+      billboardId, 
+      
     } = body;
 
     if (!userId) {
@@ -66,7 +64,7 @@ export async function POST(req: Request, { params }: { params: { storeId: number
   }
 };
 
-export async function GET(req: Request, { params }: { params: { storeId: number } }) {
+export async function GET(req: Request, { params }: { params: { storeId: bigint } }) {
   try {
     if (!params.storeId) {
       return new NextResponse("Store id is required", { status: 400 });

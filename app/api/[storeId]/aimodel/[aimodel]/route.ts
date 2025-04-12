@@ -5,7 +5,7 @@ import prismadb from "@/lib/prismadb";
 
 export async function GET(
   req: Request,
-  { params }: { params: { aimodelId: number } }
+  { params }: { params: { aimodelId: bigint } }
 ) {
   try {
     if (!params.aimodelId) {
@@ -31,7 +31,7 @@ export async function GET(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { aimodelId: number; storeId: number } }
+  { params }: { params: { aimodelId: bigint; storeId: bigint } }
 ) {
   try {
     const { userId } = auth();
@@ -70,7 +70,7 @@ export async function DELETE(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { aimodelId: number; storeId: number } }
+  { params }: { params: { aimodelId: bigint; storeId: bigint } }
 ) {
   try {
     const { userId } = auth();
@@ -78,17 +78,10 @@ export async function PATCH(
     const body = await req.json();
 
     const {
-      name,
-      description,
-      price,
-      isFeatured,
-      isArchived,
-      learningTypeId,
-      taskSpecificityId,
-      processingTypeId,
-      sizeId,
+      storeId,
+      name,      
       billboardId,
-      categoryId,
+      agentId,
     } = body;
 
     if (!userId) {
@@ -123,11 +116,10 @@ export async function PATCH(
         id: params.aimodelId,
       },
       data: {
-        name: name, 
-        
+        name: name,
         isFeatured: false, // Default value
         isArchived: false, // Default value
-        agent: { connect: { id: body.agentId } }, // Connect to existing Category        
+        agent: { connect: { id: body.agentId } }, // Connect to existing Category
         store: {
           connect: { id: params.storeId }, // Connect to the related Store
         },

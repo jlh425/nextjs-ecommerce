@@ -104,7 +104,7 @@ export async function PATCH(
       },
       data: {
         type,
-        
+        description
       },
     });
 
