@@ -1,13 +1,14 @@
-import React from 'react';
-import Stripe from 'stripe';
+{/*
+import Stripe from "stripe";
 
 // Initialize Stripe.js
-const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
+const stripePromise = Stripe(process.env.STRIPE_PUBLIC_KEY!);
 
 initialize();
 
 // Fetch Checkout Session and retrieve the client secret
 async function initialize() {
+  const stripe = await stripePromise;
   const fetchClientSecret = async () => {
     const response = await fetch("/create-checkout-session", {
       method: "POST",
@@ -24,4 +25,4 @@ async function initialize() {
   // Mount Checkout
   checkout.mount('#checkout');
 }
-
+*/}
