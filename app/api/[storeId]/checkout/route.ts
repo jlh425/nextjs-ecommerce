@@ -1,84 +1,51 @@
-import Stripe from "stripe";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { headers } from "next/headers";
 
 import { stripe } from "@/lib/stripe";
-import prismadb from "@/lib/prismadb";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
-};
+export async function POST(req: NextRequest) {
+  let event;
 
-export async function OPTIONS() {
-  return NextResponse.json({}, { headers: corsHeaders });
-}
-
-export async function POST(req: Request, { params }: { params: { storeId: bigint } }) {
-  const { productIds } = await req.json();
-
-  if (!productIds || productIds.length === 0) {
-    return new NextResponse("Product ids are required", { status: 400 });
+  try {
+    event = stripe.webhooks.constructEvent(
+      await req.text(),
+      (await headers()).get("stripe-signature"),
+      process.env.STRIPE_WEBHOOK_SECRET
+    );
+  } catch (err) {
+    const errorMessage =
+      err instanceof Error ? err.message : "Unknown error";
+    // On error, log and return the error message.
+    if (err) console.log(err);
+    console.log(`Error message: ${errorMessage}`);
+    return NextResponse.json(
+      { message: `Webhook Error: ${errorMessage}` },
+      { status: 400 }
+    );
   }
 
-  const products = await prismadb.product.findMany({
-    where: {
-      id: {
-        in: productIds,
-      },
-    },
-  });
+  const permittedEvents = ["payment_intent.succeeded"];
 
-  const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
+  if (permittedEvents.includes(event.type)) {
+    let data;
 
-  products.forEach((product) => {
-    line_items.push({
-      quantity: 1,
-      price_data: {
-        currency: "USD",
-        product_data: {
-          name: product.name,
-        },
-        unit_amount: product.price * 100, // Assuming the price is in cents, multiply by 100 to convert to the smallest currency unit
-      },
-      },
-    );
-  });
-
-  const order = await prismadb.order.create({
-    data: {
-      storeId: params.storeId,
-      isPaid: false,
-      orderItems: {
-        create: productIds.map((productId: number) => ({
-          product: {
-            connect: {
-              id: productId,
-            },
-          },
-        })),
-      },
-    },
-  });
-
-  const session = await stripe.checkout.sessions.create({
-    line_items,
-    mode: "payment",
-    billing_address_collection: "required",
-    phone_number_collection: {
-      enabled: true,
-    },
-    success_url: `${process.env.FRONTEND_STORE_URL}/cart?success=1`,
-    cancel_url: `${process.env.FRONTEND_STORE_URL}/cart?canceled=1`,
-    metadata: {
-      orderId: order.id,
-    },
-  });
-
-  return NextResponse.json(
-    { url: session.url },
-    {
-      headers: corsHeaders,
+    try {
+      switch (event.type) {
+        case "payment_intent.succeeded":
+          data = event.data.object;
+          console.log(`Payment status: ${data.status}`);
+          break;
+        default:
+          throw new Error(`Unhandled event: ${event.type}`);
+      }
+    } catch (error) {
+      console.log(error);
+      return NextResponse.json(
+        { message: "Webhook handler failed" },
+        { status: 500 }
+      );
     }
-  );
-};
+  }
+  // Return a response to acknowledge receipt of the event.
+  return NextResponse.json({ message: "Received" }, { status: 200 });
+}
