@@ -5,12 +5,20 @@ import { stripe } from "@/lib/stripe";
 
 export async function POST(req: NextRequest) {
   let event;
+const stripeSignature = (await headers()).get("stripe-signature");
 
+if (!stripeSignature) {
+  console.error("Stripe signature is missing");
+  return NextResponse.json(
+    { message: "Stripe signature is missing" },
+    { status: 400 }
+  );
+}
   try {
     event = stripe.webhooks.constructEvent(
       await req.text(),
-      (await headers()).get("stripe-signature"),
-      process.env.STRIPE_WEBHOOK_SECRET
+      stripeSignature,
+      process.env.STRIPE_WEBHOOK_SECRET!
     );
   } catch (err) {
     const errorMessage =
