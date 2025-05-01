@@ -2,6 +2,14 @@ import { redirect } from 'next/navigation'
 
 import { stripe } from '../../lib/stripe'
 
+interface SuccessPageProps {
+  searchParams: {
+    payment_intent?: string;
+  };
+}
+
+type Status = 'succeeded' | 'processing' | 'requires_payment_method' | 'canceled' | 'default';
+
 const SuccessIcon =
   <svg width="16" height="14" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path fillRule="evenodd" clipRule="evenodd" d="M15.4695 0.232963C15.8241 0.561287 15.8454 1.1149 15.5171 1.46949L6.14206 11.5945C5.97228 11.7778 5.73221 11.8799 5.48237 11.8748C5.23253 11.8698 4.99677 11.7582 4.83452 11.5681L0.459523 6.44311C0.145767 6.07557 0.18937 5.52327 0.556912 5.20951C0.924454 4.89575 1.47676 4.93936 1.79051 5.3069L5.52658 9.68343L14.233 0.280522C14.5613 -0.0740672 15.1149 -0.0953599 15.4695 0.232963Z" fill="white"/>
@@ -19,19 +27,26 @@ const InfoIcon =
     <path d="M5.75 4C5.75 3.31075 6.31075 2.75 7 2.75C7.68925 2.75 8.25 3.31075 8.25 4C8.25 4.68925 7.68925 5.25 7 5.25C6.31075 5.25 5.75 4.68925 5.75 4Z" fill="white"/>
   </svg>;
 
-const STATUS_CONTENT_MAP = {
+
+
+const STATUS_CONTENT_MAP: Record<Status, { text: string; iconColor: string; icon: JSX.Element }> = {
   succeeded: {
-    text: "Payment succeeded",
+    text: "Your payment was successful.",
     iconColor: "#30B130",
-    icon: SuccessIcon,
+    icon: SuccessIcon ,
   },
   processing: {
     text: "Your payment is processing.",
     iconColor: "#6D6E78",
-    icon: InfoIcon,
+    icon: InfoIcon ,
   },
   requires_payment_method: {
     text: "Your payment was not successful, please try again.",
+    iconColor: "#DF1B41",
+    icon: ErrorIcon ,
+  },
+  canceled: {
+    text: "Your payment was canceled.",
     iconColor: "#DF1B41",
     icon: ErrorIcon,
   },
@@ -39,10 +54,9 @@ const STATUS_CONTENT_MAP = {
     text: "Something went wrong, please try again.",
     iconColor: "#DF1B41",
     icon: ErrorIcon,
-  }
+  },
 };
-
-export default async function SuccessPage({ searchParams }) {
+export default async function SuccessPage({ searchParams }: SuccessPageProps) {
   const { payment_intent: paymentIntentId } = await searchParams
 
   if (!paymentIntentId) redirect('/')
@@ -52,13 +66,14 @@ export default async function SuccessPage({ searchParams }) {
   if (!paymentIntent) redirect('/')
 
   const { status } = paymentIntent
+    const statusContent = STATUS_CONTENT_MAP[status as Status] || STATUS_CONTENT_MAP.default;
 
   return (
     <div id="payment-status">
-      <div id="status-icon" style={{backgroundColor: STATUS_CONTENT_MAP[status].iconColor}}>
-        {STATUS_CONTENT_MAP[status].icon}
+      <div id="status-icon" style={{backgroundColor: statusContent.iconColor}}>
+        {statusContent.icon}
       </div>
-      <h2 id="status-text">{STATUS_CONTENT_MAP[status].text}</h2>
+      <h2 id="status-text">{statusContent.text}</h2>
       {paymentIntent && <div id="details-table">
         <table>
           <tbody>
