@@ -18,7 +18,7 @@ if (!stripeSignature) {
     event = stripe.webhooks.constructEvent(
       await req.text(),
       stripeSignature,
-      process.env.STRIPE_WEBHOOK_SECRET!
+      process.env.STRIPE_SECRET_KEY!
     );
   } catch (err) {
     const errorMessage =
