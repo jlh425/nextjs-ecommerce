@@ -12,19 +12,17 @@ import { loadStripe } from '@stripe/stripe-js'
 // Make sure to call loadStripe outside of a component’s render to avoid
 // recreating the Stripe object on every render.
 // This is your test publishable API key.
-const stripePromise = loadStripe(process.env.STRIPE_PUBLIC_KEY!)
-
-
+const stripePromise = loadStripe(process.env.STRIPE_PUBLIC_KEY)
 
 function PaymentForm() {
   const stripe = useStripe();
   const elements = useElements();
 
 
-  const [message, setMessage] = useState<string | null>(null);
+  const [message, setMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!stripe || !elements) {
@@ -49,7 +47,7 @@ function PaymentForm() {
     // be redirected to an intermediate site first to authorize the payment, then
     // redirected to the `return_url`.
     if (error.type === "card_error" || error.type === "validation_error") {
-      setMessage(error.message || "An unexpected error occurred.");
+      setMessage(error.message);
     } else {
       setMessage("An unexpected error occurred.");
     }
@@ -58,7 +56,7 @@ function PaymentForm() {
   };
 
   const paymentElementOptions = {
-    layout: "accordion" as const,
+    layout: "accordion",
   };
 
   return (
@@ -75,15 +73,12 @@ function PaymentForm() {
   );
 }
 
-interface CheckoutFormProps {
-  clientSecret: string | undefined;
-}
-
-export default function CheckoutForm({ clientSecret }: CheckoutFormProps) {
+export default function CheckoutForm({ clientSecret }) {
+  const appearance = {
+    theme: 'stripe',
+  };
   return (
-    <Elements stripe={stripePromise} options={{ appearance: {
-            theme: 'stripe',
-        }, clientSecret }}>
+    <Elements stripe={stripePromise} options={{ appearance, clientSecret }}>
       <PaymentForm />
     </Elements>
   )
