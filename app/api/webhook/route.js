@@ -11,7 +11,7 @@ export async function POST(req) {
     event = stripe.webhooks.constructEvent(
       await req.text(),
       (await headers()).get("stripe-signature"),
-      process.env.STRIPE_SECRET_KEY
+      process.env.STRIPE_WEBWOOK_SECRET
     );
   } catch (err) {
     const errorMessage = err.message;
