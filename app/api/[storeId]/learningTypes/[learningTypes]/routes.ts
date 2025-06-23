@@ -73,13 +73,13 @@ export async function PATCH(
 
     const body = await req.json();
 
-    const { type, description } = body;
+    const { name, description } = body;
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
     }
 
-    if (!type) {
+    if (!name) {
       return new NextResponse("type is required", { status: 400 });
     }
 
@@ -103,7 +103,7 @@ export async function PATCH(
         id: params.learningTypesId,
       },
       data: {
-        type,
+        name,
         description
       },
     });

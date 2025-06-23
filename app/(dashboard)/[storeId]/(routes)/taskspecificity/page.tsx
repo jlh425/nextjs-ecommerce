@@ -21,7 +21,7 @@ const TaskSpecificityPage = async ({
 
   const formattedTaskSpecificities: TaskSpecificityColumn[] = taskSpecificities.map((item) => ({
     id: Number(item.id),
-    type: item.type,
+    name: item.name,
     description: item.description || '',
     createdAt: format(item.createdAt, 'MMMM do, yyyy'),
     }));

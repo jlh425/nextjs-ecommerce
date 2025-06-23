@@ -22,7 +22,7 @@ const ToolPage = async ({
   const formattedTools: ToolColumn[] = tools.map((item) => ({
     id: Number(item.id),
     name: item.name,
-    value: item.value,
+    description: item.description,
     createdAt: format(item.createdAt, 'MMMM do, yyyy'),
   }));
 

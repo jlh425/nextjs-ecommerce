@@ -7,15 +7,15 @@ import { CellAction } from "./cell-action"
 
 export type TaskSpecificityColumn = {
   id: number;
-  type: string;
+  name: string;
   description: string;
   createdAt: string;
 }
 
 export const columns: ColumnDef<TaskSpecificityColumn>[] = [
   {
-    accessorKey: "type",
-    header: "Type",
+    accessorKey: "name",
+    header: "Name",
   },
   {
     accessorKey: "description",

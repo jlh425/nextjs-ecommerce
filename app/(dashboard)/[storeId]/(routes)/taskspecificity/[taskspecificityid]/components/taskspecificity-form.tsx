@@ -25,7 +25,7 @@ import { Heading } from "@/components/ui/heading"
 import { AlertModal } from "@/components/modals/alert-modal"
 
 const formSchema = z.object({
-  type: z.string().min(2),
+  name: z.string().min(2),
   description: z.string().min(2),
 });
 
@@ -51,7 +51,7 @@ export const TaskSpecificityForm: React.FC<taskSpecificityFormProps> = ({
   const form = useForm<taskSpecificityFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      type: initialData?.type || "",
+      name: initialData?.name || "",
       description: initialData?.description || "", // Convert null to an empty string
     },
   });
@@ -115,12 +115,12 @@ return (
                     <div className="grid grid-cols-3 gap-8">
                         <FormField
                             control={form.control}
-                            name="type"
+                            name="name"
                             render={({ field }) => (
                                 <FormItem>  
-                                    <FormLabel> Task Type </FormLabel>
+                                    <FormLabel> Task Name </FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Task Type" {...field} />
+                                        <Input placeholder="Task Name" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

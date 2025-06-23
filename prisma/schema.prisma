@@ -162,7 +162,7 @@ model OrderItem {
 // Model for "Type of Learning"
 model LearningType {
   id          BigInt   @id @default(autoincrement()) @map("_id") @db.Int8
-  type        String // e.g., Supervised, Unsupervised, Reinforcement, etc.
+  name        String // e.g., Supervised, Unsupervised, Reinforcement, etc.
   description String?
   store       Store    @relation("StoreToLearningType", fields: [storeId], references: [id]) // Relation to Store
   storeId     BigInt   @db.Int8
@@ -176,7 +176,7 @@ model LearningType {
 // Model for "Task-Specific vs. General-Purpose" (Characteristic 7)
 model TaskSpecificity {
   id          BigInt   @id @default(autoincrement()) @map("_id") @db.Int8
-  type        String // e.g., Task-Specific, General-Purpose
+  name        String // e.g., Task-Specific, General-Purpose
   description String?
   storeId     BigInt   @db.Int8
   store       Store    @relation("StoreToTaskSpecificity", fields: [storeId], references: [id]) // Opposite relation to Store
@@ -190,7 +190,7 @@ model TaskSpecificity {
 // Model for "Real-Time vs. Batch Processing" (Characteristic 9)
 model ProcessingType {
   id          BigInt   @id @default(autoincrement()) @map("_id") @db.Int8
-  type        String // e.g., Real-Time, Batch Processing
+  name        String // e.g., Real-Time, Batch Processing
   description String?
   storeId     BigInt   @db.Int8
   store       Store    @relation("StoreToProcessingType", fields: [storeId], references: [id]) // Opposite relation to Store
@@ -206,7 +206,7 @@ model Size {
   storeId   BigInt    @db.Int8
   store     Store     @relation("StoreToSize", fields: [storeId], references: [id])
   name      String
-  value     String
+  description     String
   products  Product[] // Relation to Product model
   agents    agent[] // Relation to agent model
   createdAt DateTime  @default(now())
@@ -220,7 +220,7 @@ model tool {
   storeId   BigInt   @db.Int8
   store     Store    @relation("StoreToTool", fields: [storeId], references: [id])
   name      String
-  value     String
+  description     String
   agents    agent[] // Relation to agent model
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

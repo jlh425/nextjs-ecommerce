@@ -10,13 +10,13 @@ export type LearningTypeColumn = {
     createdAt: string;
     updatedAt: string;
     storeId: bigint;
-    type: string;
+    name: string;
     description: string | 'No description';
 }
 export const columns: ColumnDef<LearningTypeColumn>[] = [
     {
-        accessorKey: "type",
-        header: "Type",
+        accessorKey: "name",
+        header: "Name",
     },
     {
         accessorKey: "description",

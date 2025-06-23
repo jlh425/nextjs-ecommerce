@@ -25,7 +25,7 @@ import { Heading } from "@/components/ui/heading"
 import { AlertModal } from "@/components/modals/alert-modal"
 
 const formSchema = z.object({
-  type: z.string().min(2),
+  name: z.string().min(2),
   description: z.string().min(2),
 });
 type LearningTypesFormValues = z.infer<typeof formSchema>
@@ -50,7 +50,7 @@ export const LearningTypesForm: React.FC<LearningTypesFormProps> = ({
   const form = useForm<LearningTypesFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      type: initialData?.type || "",
+      name: initialData?.name || "",
       description: initialData?.description || "", // Convert null to an empty string
     },
   });
@@ -113,12 +113,12 @@ export const LearningTypesForm: React.FC<LearningTypesFormProps> = ({
                 <div className="grid grid-cols-3 gap-8">
                     <FormField
                         control={form.control}
-                        name="type"
+                        name="name"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Type</FormLabel>
+                                <FormLabel>Name</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Type" disabled={loading} {...field} />
+                                    <Input placeholder="Name" disabled={loading} {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>

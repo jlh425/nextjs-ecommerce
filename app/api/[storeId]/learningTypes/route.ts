@@ -13,13 +13,13 @@ export async function POST(
 
     const body = await req.json();
 
-    const { id, type, description } = body;
+    const { id, name, description } = body;
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
     }
 
-    if (!type) {
+    if (!name) {
       return new NextResponse("Label is required", { status: 400 });
     }
 
@@ -41,7 +41,7 @@ export async function POST(
     const learningTypes = await prismadb.learningType.create({
       data: {
         id: body.id,
-        type: body.type,
+        name: body.name,
         description: body.description,
         store: {
           connect: { id: params.storeId }, // Connect to the related Store

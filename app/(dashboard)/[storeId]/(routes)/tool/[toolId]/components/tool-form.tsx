@@ -26,7 +26,7 @@ import { AlertModal } from "@/components/modals/alert-modal"
 
 const formSchema = z.object({
   name: z.string().min(2),
-  value: z.string().min(4).max(9).regex(/^#/, {
+  description: z.string().min(4).max(9).regex(/^#/, {
     message: 'String must be a valid hex code'
   }),
 });
@@ -131,12 +131,12 @@ export const ToolForm: React.FC<ToolFormProps> = ({
                     />
                     <FormField
                         control={form.control}
-                        name="value"
+                        name="description"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Tool Value</FormLabel>
+                                <FormLabel>Tool Description</FormLabel>
                                 <FormControl>
-                                    <Input disabled={loading} placeholder="Tool value" {...field} />
+                                    <Input disabled={loading} placeholder="Tool Description" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>

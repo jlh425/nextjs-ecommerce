@@ -10,14 +10,14 @@ export async function POST(req: Request, { params }: { params: { storeId: bigint
 
     const body = await req.json();
 
-    const { type, description } = body;
+    const { name, description } = body;
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
     }
 
-    if (!type) {
-      return new NextResponse("Type is required", { status: 400 });
+    if (!name) {
+      return new NextResponse("name is required", { status: 400 });
     }    
 
     if (!params.storeId) {
@@ -37,7 +37,7 @@ export async function POST(req: Request, { params }: { params: { storeId: bigint
 
     const taskSpecificity = await prismadb.taskSpecificity.create({
       data: {
-        type: body.tpye, // Example value
+        name: body.name, // Example value
         description: body.description || null, // Example value
         store: {
           connect: { id: params.storeId }, // Connect to the related store
