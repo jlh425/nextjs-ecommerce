@@ -20,7 +20,7 @@ const LearningTypesPage = async ({
 
   const formattedLearningTypes: LearningTypeColumn[] = learningTypes.map((item) => ({
     id: item.id, // Convert bigint to number
-    type: item.type,
+    name: item.name,
     description: item.description || "No description", // Handle null description
     createdAt: format(item.createdAt, "MMMM do, yyyy"), // Format Date to string
     updatedAt: format(item.updatedAt, "MMMM do, yyyy"), // Format Date to string

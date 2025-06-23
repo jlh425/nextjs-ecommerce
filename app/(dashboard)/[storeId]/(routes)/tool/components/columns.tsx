@@ -8,7 +8,7 @@ import { CellAction } from "./cell-action";
 export type ToolColumn = {
   id: number;
   name: string;
-  value: string;
+  description: string;
   createdAt: string;
 }
 
@@ -18,12 +18,12 @@ export const columns: ColumnDef<ToolColumn>[] = [
     header: "Name",
   },
   {
-    accessorKey: "value",
-    header: "Value",
+    accessorKey: "description",
+    header: "Description",
     cell: ({ row }: { row: { original: ToolColumn } }): ReactNode => (
       <div className="flex items-center gap-x-2">
-        {row.original.value}
-        <div className="h-6 w-6 rounded-full border" style={{ backgroundColor: row.original.value }} />
+        {row.original.description}
+        <div className="h-6 w-6 rounded-full border" style={{ backgroundColor: row.original.description }} />
       </div>
     ),
   },
