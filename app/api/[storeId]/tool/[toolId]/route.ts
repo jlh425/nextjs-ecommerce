@@ -70,7 +70,7 @@ export async function PATCH(
 
     const body = await req.json();
 
-    const { name, value } = body;
+    const { name, description } = body;
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
@@ -80,8 +80,8 @@ export async function PATCH(
       return new NextResponse("Name is required", { status: 400 });
     }
 
-    if (!value) {
-      return new NextResponse("Value is required", { status: 400 });
+    if (!description) {
+      return new NextResponse("Description is required", { status: 400 });
     }
 
     if (!params.toolId) {
@@ -105,8 +105,7 @@ export async function PATCH(
       },
       data: {
         name,
-        value,
-      
+        description,
       },
     });
 
